@@ -8,7 +8,10 @@
             type: String,
             required: true
         }
-    })
+
+})
+
+
 </script>
 
 <template>
@@ -19,7 +22,7 @@
             <li id="singleResult" v-for="value in parkings">{{ value.name }} - {{value.freeSpace}} places disponibles
                 <div class="controls">
                     <div class="btn">
-                        <a href="https://www.openstreetmap.org/search?query=46.58349874703973,0.345002261647649#map=19/46.58380/0.34467">Voir sur la carte</a>
+                        <a :href="'https://www.openstreetmap.org/search?query='+ value.coordinates">Voir sur la carte</a>
                     </div>
                     <div class="btn">Plus d'infos</div>
                 </div>

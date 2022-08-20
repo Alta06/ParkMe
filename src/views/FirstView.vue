@@ -1,18 +1,17 @@
 <script setup>
-    import {reactive} from 'vue'
+    import {onMounted, reactive} from 'vue'
     import SearchResults from '../components/SearchResults.vue'
     import {shallowRef} from 'vue'
 
     let dataParkings = reactive({});
     let parkings = reactive([]);
-    class Parkings {
+    class Parking {
         constructor(name, freeSpace, coordinates) {
             this.name = name;
             this. freeSpace = freeSpace;
             this.coordinates = coordinates;
         }
     }
-
     let city = "";
     const activeComponent = shallowRef(SearchResults);
 
@@ -24,19 +23,16 @@
                 ).then(response => response.json())
                 .then(datas => dataParkings = datas.records);
         for (let key of dataParkings) {
-               parkings.push(new Parkings(key.fields.nom, key.fields.places_restantes, key.fields.geo_point_2d))
-
+               parkings.push(new Parking(key.fields.nom, key.fields.places_restantes, key.fields.geo_point_2d))
             }
-console.log(parkings)
             
         } else if (this.city === "Nantes") {
             await fetch(
                     "https://data.nantesmetropole.fr/api/records/1.0/search/?dataset=244400404_parkings-publics-nantes-horaires&q=&facet=nom_periode&facet=jour"
                 ).then(response => response.json())
                 .then(datas => dataParkings = datas.records);
-            for (let v of dataParkings) {
-                parkings.push(v.fields.nom + " - " + v.fields.places_restantes);
-              
+            for (let key of dataParkings) {
+               parkings.push(new Parking(key.fields.nom, key.fields.places_restantes, key.fields.geo_point_2d))
             }
         }
     }
@@ -45,6 +41,7 @@ console.log(parkings)
     function back() {
         parkings.length = 0;
     }
+console.log(parkings)
 </script>
 
 <template>
@@ -76,7 +73,7 @@ console.log(parkings)
     .fade-enter-from,
     .fade-leave-to {
        
-        transform: translateX(500px);
+        transform: translateX(100%);
 
     }
 
@@ -86,6 +83,7 @@ console.log(parkings)
         padding: 6px;
         border-radius: 5px;
         text-align: center;
+        cursor: pointer;
     }
 
     .searchResult {
@@ -127,6 +125,7 @@ console.log(parkings)
         bottom: 0;
         left: 0;
         position: fixed;
+        width: 100%;
         background: #0D0C1D;
         padding: 25px;
         overflow-y: scroll;
