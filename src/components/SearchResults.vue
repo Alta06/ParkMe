@@ -8,9 +8,7 @@
             type: String,
             required: true
         }
-
 })
-
 
 </script>
 
@@ -30,8 +28,6 @@
         </ul>
     </div>
 </template>
-
-
 
 <style lang="scss">
     p {
