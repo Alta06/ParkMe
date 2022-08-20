@@ -5,10 +5,16 @@
 
     let dataParkings = reactive({});
     let parkings = reactive([]);
+    class Parkings {
+        constructor(name, freeSpace, coordinates) {
+            this.name = name;
+            this. freeSpace = freeSpace;
+            this.coordinates = coordinates;
+        }
+    }
+
     let city = "";
     const activeComponent = shallowRef(SearchResults);
-
-    //changer parkings pour un objet
 
     //request a city to the API that match the input of the user
     async function getParkings() {
@@ -17,9 +23,11 @@
                     "https://data.opendatasoft.com/api/records/1.0/search/?dataset=mobilites-stationnement-des-parkings-en-temps-reel@grandpoitiers&q="
                 ).then(response => response.json())
                 .then(datas => dataParkings = datas.records);
-            for (let v of dataParkings) {
-                parkings.push(v.fields.nom + " - " + v.fields.places_restantes);
+        for (let key of dataParkings) {
+               parkings.push(new Parkings(key.fields.nom, key.fields.places_restantes, key.fields.geo_point_2d))
+
             }
+console.log(parkings)
             
         } else if (this.city === "Nantes") {
             await fetch(

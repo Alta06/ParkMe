@@ -16,11 +16,10 @@
         <div class="btn" @click="$emit('back')">Retour</div>
         <p>{{parkings.length}} parkings trouvés à {{city}} :</p>
         <ul>
-            <li id="singleResult" v-for="value in parkings">{{ value }} places disponibles
+            <li id="singleResult" v-for="value in parkings">{{ value.name }} - {{value.freeSpace}} places disponibles
                 <div class="controls">
-
                     <div class="btn">
-                        <a href="#">Voir sur la carte</a>
+                        <a href="https://www.openstreetmap.org/search?query=46.58349874703973,0.345002261647649#map=19/46.58380/0.34467">Voir sur la carte</a>
                     </div>
                     <div class="btn">Plus d'infos</div>
                 </div>
