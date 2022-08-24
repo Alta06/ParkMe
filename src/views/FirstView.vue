@@ -1,16 +1,15 @@
 <script setup>
-    import {
-        onMounted,
-        reactive
-    } from 'vue'
+    import {reactive} from 'vue'
     import SearchResults from '../components/SearchResults.vue'
-    import {
-        shallowRef
-    } from 'vue'
-    import Nice from '../assets/nice.json'
+    import {shallowRef} from 'vue'
+    import {ref} from 'vue'
+    import Nice from '../assets/nice.json';
 
     let dataParkings = reactive({});
     let parkings = reactive([]);
+    let city = ref("");
+    let noparks = ref(false);
+
     class Parking {
         constructor(name, freeSpace, coordinates) {
             this.name = name;
@@ -18,12 +17,13 @@
             this.coordinates = coordinates;
         }
     }
-    let city = "";
+
     const activeComponent = shallowRef(SearchResults);
 
     //request a city to the API that match the input of the user
     async function getParkings() {
-        switch (this.city) {
+  
+        switch (city.value) {
             case "Poitiers":
                 await fetch(
                         "https://data.opendatasoft.com/api/records/1.0/search/?dataset=mobilites-stationnement-des-parkings-en-temps-reel@grandpoitiers&q="
@@ -44,6 +44,7 @@
                 for (let key of dataParkings) {
                     parkings.push(new Parking(key.fields.nom, key.fields.places_restantes, key.fields.geo_point_2d))
                 }
+
                 break;
 
             case "Lille":
@@ -66,42 +67,42 @@
                 for (let key of dataParkings) {
                     parkings.push(new Parking(key.NOM, '', key.geometry.coordinates));
                 }
+                //To invert coordinates in array
                 for (let key of parkings) {
                     [key.coordinates[0], key.coordinates[1]] = [key.coordinates[1], key.coordinates[0]]
                 }
-
                 break;
             default:
+                noparks = true;
                 console.log("no match");
-        }
+                console.log(noparks);
+        } 
     }
-
     //empty array to go back to homepage
     function back() {
-        parkings.length = 0;
+        parkings.length = 0; 
         document.getElementById('citySelect').value = "";
     }
-    console.log(parkings)
 </script>
 
 <template>
     <div class="searchResult">
-        <form onsubmit="return false">
+        <form @submit.prevent>
             <label for="citySelect">Je recherche un parking à :</label>
-            <input id="citySelect" class="classicInput" type="text" name="city" v-model="city" list="city">
+            <input id="citySelect" class="classicInput" type="text" name="city" v-model="city" list="city"> 
             <datalist id="city">
                 <option value="Poitiers"></option>
                 <option value="Nantes"></option>
                 <option value="Lille"></option>
                 <option value="Nice"></option>
-
             </datalist>
             <button class="submitButton btn" type="submit" @click="getParkings()">Rechercher</button>
         </form>
-        <Transition name="fade" mode="out-in">
-            <SearchResults @back="back" :is="activeComponent" :parkings="parkings" :city="city" />
-        </Transition>
+<p>Aucun parking à {{ city }} pour le moment :)</p>
 
+        <Transition name="fade" mode="out-in">
+            <SearchResults @back="back" :parkings="parkings"/>
+        </Transition>
     </div>
 </template>
 
@@ -128,10 +129,9 @@
         justify-content: center;
         align-items: center;
         cursor: pointer;
-        height: 5vh;
+        height: 50px;
         display: flex;
         font-size: 1em;
-
     }
 
     .searchResult {
@@ -163,6 +163,8 @@
             margin: auto;
             border: none;
             font-size: 1.5em;
+                
+
         }
     }
 
